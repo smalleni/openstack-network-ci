@@ -269,20 +269,26 @@ function overcloud_deploy() {
 overcloud_deploy
 EOSSH
 
-# Setup Browbeat
+# Clone Browbeat
+echo "clone browbeat"
+ssh -T -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa root@${UNDERCLOUD_HOST} <<EOSSH
+su - stack
+# Clone Browbeat
+git clone https://github.com/openstack/browbeat
+# Clone Private config files
+git clone https://${TOKEN}@github.com/redhat-performance/browbeat-config.git
+# Repalce Ansible group vars and browbeat config file with the private repo files
+cp browbeat-config/dataplane-ci/browbeat-config.yaml browbeat/
+cp browbeat-config/dataplane-ci/group_vars/all.yml browbeat/ansible/install/group_vars/
+EOSSH
+
+# setup browbeat
 echo "setup browbeat"
 ssh -T -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa root@${UNDERCLOUD_HOST} <<'EOSSH'
 su - stack
 OSP_VERSION=$(cat osp_version.txt)
 NEUTRON_BACKEND=$(cat neutron_backend.txt)
 UNDERCLOUD_HOST=$(cat undercloud_host.txt)
-# Clone Browbeat
-git clone https://github.com/openstack/browbeat
-# Clone Private config files
-git clone https://84ce02fe1a7cebffab67f5d65ceda4d9ca72b040@github.com/redhat-performance/browbeat-config.git
-# Repalce Ansible group vars and browbeat config file with the private repo files
-cp browbeat-config/dataplane-ci/browbeat-config.yaml browbeat/
-cp browbeat-config/dataplane-ci/group_vars/all.yml browbeat/ansible/install/group_vars/
 # generate cloud name based on neutron backend
 CLOUD_NAME=openstack-dataplane-ci-${NEUTRON_BACKEND}
 pushd browbeat
@@ -300,7 +306,7 @@ popd
 EOSSH
 
 # run browbeat
-# need separate SSH session since Jenkins job seems to exist after running ansible host generation
+# need separate SSH session since Jenkins job seems to exit after running ansible host generation
 ssh -T -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa root@${UNDERCLOUD_HOST} <<EOSSH
 pwd
 su - stack
