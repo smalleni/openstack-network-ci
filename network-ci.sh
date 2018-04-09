@@ -94,7 +94,7 @@ echo "OSP build is $OSP_BUILD"
 echo "Undercloud host is $UNDERCLOUD_HOST"
 BUILD_REPO=$(wget -O RHOS_REPO.repo ${REPO}/${OSP_VERSION}.0-RHEL-7/${OSP_BUILD}/RH7-RHOS-${OSP_VERSION}.0.repo)
 BUILD=$(cat RHOS_REPO.repo  | grep baseurl | head -n 1 | awk -F\/ '{print$8}')
-pushd ops-tools/ansible/undercloud
+pushd tools/ansible/undercloud
 ###################################################################################
 # Set required variables
 sed -i "/^rhos_release_rpm:/c rhos_release_rpm: ${RHOS_RELEASE_RPM}" vars/main.yml
