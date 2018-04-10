@@ -185,11 +185,12 @@ function cleaning() {
 cleaning
 
 # Clone and setup templates
+OSP_VERSION=$(cat osp_version.txt)
 rm -rf templates/*
 if [ ! -d openstack-templates ]; then
     git clone https://github.com/smalleni/openstack-templates.git
 fi
-cp -r openstack-templates/RDU-Perf/Newton/Dell/. templates/
+cp -r openstack-templates/RDU-Perf/${OSP_VERSION}/Dell/. templates/
 # tag nodes
 function tag_nodes() {
     declare -A profile
