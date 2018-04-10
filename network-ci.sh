@@ -1,4 +1,4 @@
-set -x
+set -eux
 # ssh to hypervisor to delete any existing undercloud VMs and spawn new undercloud VM
 ssh -T -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa root@${VIRTUALIZATION_HOST} <<'EOSSH'
 IMAGE_LOCATION=/var/lib/libvirt/images
@@ -256,7 +256,7 @@ function overcloud_deploy() {
             time openstack overcloud deploy --templates -e /usr/share/openstack-tripleo-heat-templates/environments/network-isolation.yaml -e templates/network-environment.yaml -e templates/deploy.yaml -e /usr/share/openstack-tripleo-heat-templates/environments/neutron-ovs-dvr.yaml --ntp-server clock.redhat.com > overcloud_deploy.log 2>&1
         elif [ $NEUTRON_BACKEND == ODL ]; then
            pushd /home/stack/images
-           virt-customize -a overcloud-full.qcow2 --run-command "yum -y localinstall ${RHOS_RELEASE_RPM}
+           virt-customize -a overcloud-full.qcow2 --run-command "yum -y localinstall ${RHOS_RELEASE_RPM}"
            virt-customize -a overcloud-full.qcow2 --run-command 'rhos-release ${OSP_VERSION}'
            virt-customize -a overcloud-full.qcow2 --run-command "yum install -y java-1.8.0-openjdk.x86_64"
            virt-customize -a overcloud-full.qcow2 --run-command "yum install -y opendaylight"           
