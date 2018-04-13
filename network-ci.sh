@@ -241,19 +241,19 @@ function overcloud_deploy() {
         if [ $NEUTRON_BACKEND == OVS ]; then        
             sudo sed -i  "/^\s*OS::TripleO::Compute::Ports::ExternalPort:/c \  OS::TripleO::Compute::Ports::ExternalPort: /usr/share/openstack-tripleo-heat-templates/network/ports/external.yaml" /usr/share/openstack-tripleo-heat-templates/environments/neutron-ovs-dvr.yaml
             sudo sed -i  "/^\s*OS::TripleO::Compute::Net::SoftwareConfig:/c \  OS::TripleO::Compute::Net::SoftwareConfig: /home/stack/templates/nic-configs/compute.yaml" /usr/share/openstack-tripleo-heat-templates/environments/neutron-ovs-dvr.yaml
-            time openstack overcloud deploy --templates -e /usr/share/openstack-tripleo-heat-templates/environments/network-isolation.yaml -e templates/network-environment.yaml -e templates/deploy.yaml -e /home/stack/docker_registry.yaml -e /usr/share/openstack-tripleo-heat-templates/environments/neutron-ovs-dvr.yaml --ntp-server clock.redhat.com > overcloud_deploy.log 2>&1
+            time openstack overcloud deploy --templates -e /usr/share/openstack-tripleo-heat-templates/environments/network-isolation.yaml -e templates/network-environment.yaml -e templates deploy.yaml -e /home/stack/docker_registry.yaml -e /usr/share/openstack-tripleo-heat-templates/environments/neutron-ovs-dvr.yaml -e neutron-policy.yaml--ntp-server clock.redhat.com > overcloud_deploy.log 2>&1
         elif [ $NEUTRON_BACKEND == ODL ]; then
            openstack overcloud container image prepare --namespace=${INSECURE_REGISTRY}/${NAMESPACE} --env-file=/home/stack/docker_registry.yaml --prefix=openstack --tag=${TAG} -e /usr/share/openstack-tripleo-heat-templates/environments/services-docker/neutron-opendaylight.yaml
-           time openstack overcloud deploy --templates -e /usr/share/openstack-tripleo-heat-templates/environments/network-isolation.yaml -e templates/network-environment.yaml -e templates/deploy.yaml -e /home/stack/docker_registry.yaml -e /usr/share/openstack-tripleo-heat-templates/environments/services-docker/neutron-opendaylight.yaml -e templates/opendaylight-transactions.yaml --ntp-server clock.redhat.com > overcloud_deploy.log 2>&1
+           time openstack overcloud deploy --templates -e /usr/share/openstack-tripleo-heat-templates/environments/network-isolation.yaml -e templates/network-environment.yaml -e templates/deploy.yaml -e /home/stack/docker_registry.yaml -e /usr/share/openstack-tripleo-heat-templates/environments/services-docker/neutron-opendaylight.yaml -e templates/opendaylight-transactions.yaml -e neutron-policy.yaml --ntp-server clock.redhat.com > overcloud_deploy.log 2>&1
         elif [ $NEUTRON_BACKEND == OVN ]; then
            openstack overcloud container image prepare --namespace=${INSECURE_REGISTRY}/${NAMESPACE} --env-file=/home/stack/docker_registry.yaml --prefix=openstack --tag=${TAG} -e /usr/share/openstack-tripleo-heat-templates/environments/services-docker/neutron-ovn-ha.yaml
-           time openstack overcloud deploy --templates -e /usr/share/openstack-tripleo-heat-templates/environments/network-isolation.yaml -e templates/network-environment.yaml -e templates/deploy.yaml -e /home/stack/docker_registry.yaml -e /usr/share/openstack-tripleo-heat-templates/environments/services-docker/neutron-ovn-ha.yaml --ntp-server clock.redhat.com > overcloud_deploy.log 2>&1
+           time openstack overcloud deploy --templates -e /usr/share/openstack-tripleo-heat-templates/environments/network-isolation.yaml -e templates/network-environment.yaml -e templates/deploy.yaml -e /home/stack/docker_registry.yaml -e /usr/share/openstack-tripleo-heat-templates/environments/services-docker/neutron-ovn-ha.yaml -e neutron-policy.yaml --ntp-server clock.redhat.com > overcloud_deploy.log 2>&1
         fi
     else
         if [ $NEUTRON_BACKEND == OVS ]; then        
             sudo sed -i  "/^\s*OS::TripleO::Compute::Ports::ExternalPort:/c \  OS::TripleO::Compute::Ports::ExternalPort: /usr/share/openstack-tripleo-heat-templates/network/ports/external.yaml" /usr/share/openstack-tripleo-heat-templates/environments/neutron-ovs-dvr.yaml
             sudo sed -i  "/^\s*OS::TripleO::Compute::Net::SoftwareConfig:/c \  OS::TripleO::Compute::Net::SoftwareConfig: /home/stack/templates/nic-configs/compute.yaml" /usr/share/openstack-tripleo-heat-templates/environments/neutron-ovs-dvr.yaml
-            time openstack overcloud deploy --templates -e /usr/share/openstack-tripleo-heat-templates/environments/network-isolation.yaml -e templates/network-environment.yaml -e templates/deploy.yaml -e /usr/share/openstack-tripleo-heat-templates/environments/neutron-ovs-dvr.yaml --ntp-server clock.redhat.com > overcloud_deploy.log 2>&1
+            time openstack overcloud deploy --templates -e /usr/share/openstack-tripleo-heat-templates/environments/network-isolation.yaml -e templates/network-environment.yaml -e templates/deploy.yaml -e /usr/share/openstack-tripleo-heat-templates/environments/neutron-ovs-dvr.yaml -e neutron-policy.yaml --ntp-server clock.redhat.com > overcloud_deploy.log 2>&1
         elif [ $NEUTRON_BACKEND == ODL ]; then
            pushd /home/stack/images
            virt-customize -a overcloud-full.qcow2 --run-command "yum -y localinstall ${RHOS_RELEASE_RPM}"
@@ -262,9 +262,9 @@ function overcloud_deploy() {
            virt-customize -a overcloud-full.qcow2 --run-command "yum install -y opendaylight"           
            openstack overcloud image upload --update-existing
            popd
-           time openstack overcloud deploy --templates -e /usr/share/openstack-tripleo-heat-templates/environments/network-isolation.yaml -e templates/network-environment.yaml -e templates/deploy.yaml -e /usr/share/openstack-tripleo-heat-templates/environments/services-docker/neutron-opendaylight.yaml --ntp-server clock.redhat.com > overcloud_deploy.log 2>&1
+           time openstack overcloud deploy --templates -e /usr/share/openstack-tripleo-heat-templates/environments/network-isolation.yaml -e templates/network-environment.yaml -e templates/deploy.yaml -e /usr/share/openstack-tripleo-heat-templates/environments/services-docker/neutron-opendaylight.yaml -e neutron-policy.yaml --ntp-server clock.redhat.com > overcloud_deploy.log 2>&1
         elif [ $NEUTRON_BACKEND == OVN ]; then           
-           time openstack overcloud deploy --templates -e /usr/share/openstack-tripleo-heat-templates/environments/network-isolation.yaml -e templates/network-environment.yaml -e templates/deploy.yaml -e /usr/share/openstack-tripleo-heat-templates/environments/services-docker/neutron-ovn-ha.yaml --ntp-server clock.redhat.com > overcloud_deploy.log 2>&1
+           time openstack overcloud deploy --templates -e /usr/share/openstack-tripleo-heat-templates/environments/network-isolation.yaml -e templates/network-environment.yaml -e templates/deploy.yaml -e /usr/share/openstack-tripleo-heat-templates/environments/services-docker/neutron-ovn-ha.yaml -e neutron-policy.yaml --ntp-server clock.redhat.com > overcloud_deploy.log 2>&1
         fi      
     fi
 }
