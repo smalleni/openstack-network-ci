@@ -301,6 +301,10 @@ sed -i "/^\s*server:/c \  server: ${UNDERCLOUD_HOST}" browbeat-config.yaml
 pushd ansible
 # set graphite prefix 
 sed -i "/^graphite_prefix/c graphite_prefix: ${CLOUD_NAME}" install/group_vars/all.yml
+# opendaylight monitoring
+if [ ${NEUTRON_BACKEND} == ODL ]; then
+    sed -i "/^opendaylight:/c opendaylight_java_plugin: true" install/group_vars/all.yml
+fi
 # generate hosts file
 ./generate_tripleo_hostfile.sh -l
 popd
