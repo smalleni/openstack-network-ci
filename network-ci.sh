@@ -309,6 +309,14 @@ fi
 ./generate_tripleo_hostfile.sh -l
 popd
 popd
+source ~/overcloudrc
+# Create external network and set quotas
+openstack network create --share --external --provider-physical-network datacentre --provider-network-type vlan --provider-segment 200 public
+openstack subnet create --allocation-pool start=172.21.0.110,end=172.21.0.250 --gateway=172.21.0.1 --no-dhcp --network public --subnet-range 172.21.0.0/24 public_subnet
+openstack quota set --class default --cores 100
+openstack quota set --class default --instances 100
+EXTERNAL_NET=$(openstack network list --external -c ID -f value)
+sed -i "/^\s*ext_net_id:/c \        ext_net_id: ${EXTERNAL_NET}" browbeat-config.yaml
 EOSSH
 
 # run browbeat
