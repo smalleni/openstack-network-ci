@@ -38,7 +38,7 @@ function prepare_image() {
     if [ -f jenkins-key ]; then
         rm jenkins-key
     fi
-    wget http://8.43.86.1:8088/smalleni/jenkins-key
+    wget http://elk.browbeatproject.org:9090/~smalleni/jenkins-key
     guestmount -a ${IMAGE_LOCATION}/rhel-base -m /dev/sda1 ${MNT_PNT}
     pushd ${MNT_PNT}/root
     ls -talrh 
